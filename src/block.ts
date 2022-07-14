@@ -1,15 +1,17 @@
+import Blockchain, { MINTING_PUBLIC_ADDRESS } from "./blockchain";
 import { SHA256 } from "./crypto";
+import Transaction from "./transaction";
 
 export default class Block {
   timestamp: number;
-  data: unknown[];
+  data: Transaction[];
   previousHash: string;
   hash: string;
   nonce: number;
 
   constructor(
     timestamp: number,
-    data: unknown[] = [],
+    data: Transaction[] = [],
     previousHash: string = ""
   ) {
     this.timestamp = timestamp;
@@ -33,5 +35,11 @@ export default class Block {
       this.nonce++;
       this.hash = this.getHash();
     }
+  }
+
+  hasValidTransactions(chain: Blockchain): boolean {
+    return this.data.every((transaction) =>
+      transaction.isValid(transaction, chain)
+    );
   }
 }
